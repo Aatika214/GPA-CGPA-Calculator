@@ -1,54 +1,64 @@
-# 🎓 GPA & CGPA Calculator
+# 🎓 GPA & CGPA Calculator App
 # Author: Umm e Aatika (FA23-BST-078)
 # Institution: COMSATS University Islamabad, Lahore Campus
 
+import streamlit as st
 import numpy as np
 import pandas as pd
 
-print("===================================")
-print("      🎓 GPA & CGPA Calculator      ")
-print("===================================")
+# App Title
+st.title("🎓 GPA & CGPA Calculator App")
+st.markdown("##### Developed by **Umm e Aatika (FA23-BST-078)** | COMSATS University Lahore Campus")
+
+st.write("---")
 
 # -------------------------------
-# Step 1: GPA Calculation
+# GPA Calculation Section
 # -------------------------------
-num_courses = int(input("Enter number of subjects in this semester: "))
+st.header("📘 GPA Calculation")
+
+num_courses = st.number_input("Enter number of subjects this semester:", min_value=1, max_value=12, step=1)
 
 grades = []
 credits = []
 
 for i in range(num_courses):
-    g = float(input(f"Enter grade points for subject {i+1} (e.g. 3.5): "))
-    c = float(input(f"Enter credit hours for subject {i+1}: "))
+    col1, col2 = st.columns(2)
+    with col1:
+        g = st.number_input(f"Grade Points for Subject {i+1}", min_value=0.0, max_value=4.0, step=0.1)
+    with col2:
+        c = st.number_input(f"Credit Hours for Subject {i+1}", min_value=1.0, max_value=4.0, step=0.5)
     grades.append(g)
     credits.append(c)
 
-grades = np.array(grades)
-credits = np.array(credits)
+if st.button("Calculate GPA"):
+    grades = np.array(grades)
+    credits = np.array(credits)
+    gpa = np.sum(grades * credits) / np.sum(credits)
+    st.success(f"🎯 Your GPA for this semester is **{gpa:.2f}**")
 
-gpa = np.sum(grades * credits) / np.sum(credits)
-print("\n👉 Your GPA for this semester is:", round(gpa, 2))
+st.write("---")
 
 # -------------------------------
-# Step 2: CGPA Calculation
+# CGPA Calculation Section
 # -------------------------------
-n = int(input("\nEnter number of semesters completed: "))
+st.header("📗 CGPA Calculation")
+
+num_semesters = st.number_input("Enter total number of semesters completed:", min_value=1, max_value=12, step=1)
+
 gpa_list = []
-
-for i in range(n):
-    g = float(input(f"Enter GPA for semester {i+1}: "))
+for i in range(num_semesters):
+    g = st.number_input(f"GPA for Semester {i+1}", min_value=0.0, max_value=4.0, step=0.1)
     gpa_list.append(g)
 
-cgpa = np.mean(gpa_list)
+if st.button("Calculate CGPA"):
+    df = pd.DataFrame({
+        "Semester": [f"Semester {i+1}" for i in range(num_semesters)],
+        "GPA": gpa_list
+    })
+    cgpa = np.mean(gpa_list)
+    st.dataframe(df)
+    st.success(f"🏅 Your Overall CGPA is **{cgpa:.2f}**")
 
-# -------------------------------
-# Step 3: Show Summary using Pandas
-# -------------------------------
-data = {'Semester': [f'Sem {i+1}' for i in range(n)], 'GPA': gpa_list}
-df = pd.DataFrame(data)
-
-print("\n📘 GPA Summary Table:")
-print(df)
-print("\n🎯 Your Overall CGPA is:", round(cgpa, 2))
-
-print("\nDeveloped by Umm e Aatika (FA23-BST-078)")
+st.write("---")
+st.caption("Developed by Umm e Aatika (FA23-BST-078)")
