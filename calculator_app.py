@@ -7,29 +7,29 @@ import numpy as np
 import pandas as pd
 
 # -------------------------------
-# Function to convert marks to grade points
+# Function to convert marks into grade points
 # -------------------------------
 def marks_to_grade_point(marks):
     if marks >= 85:
-        return 4.00
+        return 4.0
     elif marks >= 80:
-        return 3.70
+        return 3.7
     elif marks >= 75:
-        return 3.33
+        return 3.3
     elif marks >= 70:
-        return 3.00
+        return 3.0
     elif marks >= 65:
-        return 2.70
+        return 2.7
     elif marks >= 61:
-        return 2.33
+        return 2.3
     elif marks >= 58:
-        return 2.00
+        return 2.0
     elif marks >= 55:
-        return 1.70
+        return 1.7
     elif marks >= 50:
-        return 1.00
+        return 1.0
     else:
-        return 0.00
+        return 0.0
 
 # -------------------------------
 # Streamlit UI
@@ -48,7 +48,6 @@ num_courses = st.number_input("Enter number of subjects this semester:", min_val
 marks = []
 credits = []
 grade_points = []
-individual_gpa = []
 
 for i in range(num_courses):
     col1, col2 = st.columns(2)
@@ -58,9 +57,7 @@ for i in range(num_courses):
         c = st.number_input(f"Credit Hours for Subject {i+1}:", min_value=1.0, max_value=4.0, step=0.5)
     marks.append(m)
     credits.append(c)
-    gp = marks_to_grade_point(m)
-    grade_points.append(gp)
-    individual_gpa.append(round(gp * c, 2))
+    grade_points.append(marks_to_grade_point(m))
 
 if st.button("Calculate GPA"):
     grades = np.array(grade_points)
@@ -71,12 +68,11 @@ if st.button("Calculate GPA"):
         "Subject": [f"Subject {i+1}" for i in range(num_courses)],
         "Marks": marks,
         "Grade Points": grade_points,
-        "Credit Hours": credits,
-        "Individual GPA": individual_gpa
+        "Credit Hours": credits
     })
 
     st.subheader("📄 Semester Summary")
-    st.dataframe(df, use_container_width=True)
+    st.dataframe(df)
     st.success(f"🎯 Your GPA for this semester is **{gpa:.2f}**")
 
 st.write("---")
@@ -100,7 +96,7 @@ if st.button("Calculate CGPA"):
     })
     cgpa = np.mean(gpa_list)
     st.subheader("📘 CGPA Summary")
-    st.dataframe(df_cgpa, use_container_width=True)
+    st.dataframe(df_cgpa)
     st.success(f"🏅 Your Overall CGPA is **{cgpa:.2f}**")
 
 st.write("---")
